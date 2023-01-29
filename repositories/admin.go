@@ -13,7 +13,7 @@ type (
 	}
 	AdminRepositories interface {
 		Register(ctx context.Context, input *domain.Admin) error
-		Login(ctx context.Context, username string) (*domain.Admin, error)
+		SearchAdminByUsername(ctx context.Context, username string) (*domain.Admin, error)
 	}
 )
 
@@ -28,6 +28,8 @@ func (thisAdmin *adminRepositories) Register(ctx context.Context, input *domain.
 	})
 }
 
-func (thisAdmin *adminRepositories) Login(ctx context.Context, username string) (*domain.Admin, error) {
-	panic("not implemented") // TODO: Implement
+func (thisAdmin *adminRepositories) SearchAdminByUsername(ctx context.Context, username string) (*domain.Admin, error) {
+	admin := new(domain.Admin)
+	err := thisAdmin.db.WithContext(ctx).Where("username = ?", username).First(admin).Error
+	return admin, err
 }
