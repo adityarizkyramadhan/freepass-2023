@@ -12,8 +12,8 @@ type (
 		db *gorm.DB
 	}
 	AdminRepositories interface {
-		Register(ctx context.Context, input *domain.Admin) error
-		SearchAdminByUsername(ctx context.Context, username string) (*domain.Admin, error)
+		Create(ctx context.Context, input *domain.Admin) error
+		SearchByUsername(ctx context.Context, username string) (*domain.Admin, error)
 	}
 )
 
@@ -22,13 +22,13 @@ func NewAdmin(db *gorm.DB) AdminRepositories {
 	return &adminRepositories{db: db}
 }
 
-func (thisAdmin *adminRepositories) Register(ctx context.Context, input *domain.Admin) error {
+func (thisAdmin *adminRepositories) Create(ctx context.Context, input *domain.Admin) error {
 	return thisAdmin.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		return tx.Create(input).Error
 	})
 }
 
-func (thisAdmin *adminRepositories) SearchAdminByUsername(ctx context.Context, username string) (*domain.Admin, error) {
+func (thisAdmin *adminRepositories) SearchByUsername(ctx context.Context, username string) (*domain.Admin, error) {
 	admin := new(domain.Admin)
 	err := thisAdmin.db.WithContext(ctx).Where("username = ?", username).First(admin).Error
 	return admin, err
